@@ -61,6 +61,7 @@
           (builtins.removeAttrs npmPackages.dependencies ["webpack"]);
         node_modules = node_modules' ++ [webpack];
       in {
+        devShells.default = seta-js-output.devShells.${system}.default;
         packages = {
           my-pkg = pkgs.stdenv.mkDerivation {
             name = "my-pkg";
