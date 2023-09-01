@@ -66,7 +66,7 @@
             name = "my-pkg";
             src = nix-filter.lib.filter {
               root = ./.;
-              include = ["main.js" "package.json" "yarn.lock" "webpack.config.js" "tsconfig.json"];
+              include = ["main.ts" "package.json" "yarn.lock" "webpack.config.js" "tsconfig.json"];
             };
             buildInputs = node_modules;
             buildPhase = ''

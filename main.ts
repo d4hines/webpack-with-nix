@@ -1,10 +1,16 @@
 import { TezosToolkit } from "@taquito/taquito";
 import { BeaconWallet } from "@taquito/beacon-wallet";
-import { NetworkType } from "@airgap/beacon-dapp";
+import { NetworkType, AccountInfo } from "@airgap/beacon-dapp";
+
+type BeaconAPI = {
+  Tezos: TezosToolkit;
+  wallet: BeaconWallet;
+  account: AccountInfo;
+};
 
 // TODO: automatically log the user in if possible - no need
 // for making them click connect
-const ensureActiveAccount = async (wallet) => {
+const ensureActiveAccount = async (wallet: BeaconWallet) => {
   const activeAccount = await wallet.client.getActiveAccount();
   if (!activeAccount) {
     await wallet.requestPermissions({
@@ -18,7 +24,7 @@ const ensureActiveAccount = async (wallet) => {
   }
   return activeAccount;
 };
-export const connect = async () => {
+export const connect = async (): Promise<BeaconAPI> => {
   const Tezos = new TezosToolkit("https://mainnet.api.tez.ie/");
 
   const wallet = new BeaconWallet({
@@ -32,14 +38,14 @@ export const connect = async () => {
   // TODO: can activeAccount change?
   return { Tezos, wallet, account };
 };
-export const getAddress = async (api) => api.account.address;
-export const getPublicKey = async (api) => api.account.publicKey;
+export const getAddress = async (api: BeaconAPI) => api.account.address;
+export const getPublicKey = async (api: BeaconAPI) => api.account.publicKey;
 
 export const submitTransfer = async (
-  api,
-  destination,
-  order_id,
-  amount_mutez
+  api: BeaconAPI,
+  destination: string,
+  order_id: number,
+  amount_mutez: number
 ) => {
   const contract = await api.Tezos.wallet.at(destination);
   console.log("contract", contract);
@@ -49,5 +55,3 @@ export const submitTransfer = async (
     .send({ amount: amount_mutez / 1000000 });
   return op.opHash;
 };
-
-console.log("hello");
